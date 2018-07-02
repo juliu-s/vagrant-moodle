@@ -3,17 +3,7 @@ Vagrant Moodle
 
 .. contents::
 
-.. section-numbering::
-
-Using Vagrant to setup a few servers to play with Moodle.
-
-* Apache
-* PHP-FPM
-* MariaDB
-* HAProxy
-* NFS
-* Moodle
-* Redis
+Using Vagrant to setup a few servers to play with Moodle in combination with: Apache, PHP-FPM, MariaDB, HAProxy, NFS, Moodle and Redis
 
 Requirements
 ============
