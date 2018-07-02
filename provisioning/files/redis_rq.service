@@ -1,0 +1,13 @@
+[Unit]
+Description=FixRedisRequirements
+After=network.target
+Before=redis.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/redis_req.sh
+TimeoutStopSec=20
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
