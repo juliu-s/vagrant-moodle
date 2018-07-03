@@ -80,7 +80,7 @@ To SSH into a server run from this repo:
     mariadb database: moodle
     mariadb host: data-server.example.com / 192.168.100.100
 
-    nfs export: /srv/webexport web1.example.com(rw,no_root_squash) web2.example.com(rw,no_root_squash)"
+    nfs export: /srv/webexport web1.example.com(rw,no_root_squash) web2.example.com(rw,no_root_squash)
 
 **lb.example.com**
 
