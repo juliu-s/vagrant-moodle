@@ -5,6 +5,11 @@ Vagrant Moodle
 
 Using Vagrant to setup a few servers to play with Moodle in combination with: Apache, PHP-FPM, MariaDB, HAProxy, NFS, Moodle and Redis
 
+.. image:: https://raw.githubusercontent.com/juliu-s/vagrant-moodle/images/moodle_setup.png
+    :alt: Moodle setup
+    :width: 100%
+    :align: center
+
 Requirements
 ============
 
@@ -45,6 +50,14 @@ Details
 | lb.example.com                      | 192.168.100.150 | 1 CPU, 512MB  |
 +-------------------------------------+-----------------+---------------+
 
+Check the following directories in this repo for the provisioning scripts and configuration files.
+
+.. code-block:: text
+
+    provisioning
+    provisioning/files
+    provisioning/files/setup-moodle.sh << to change the version of Moodle
+
 When you're done run **vagrant destroy**, or if you want to continue later run **vagrant suspend** and **vagrant resume** to continue again.
 
 Post setup
@@ -56,13 +69,6 @@ To SSH into a server run from this repo:
 * vagrant ssh web1
 * vagrant ssh web2
 * vagrant ssh lb
-
-Also see the following directories in this repo for the provisioning scripts and configuration files.
-
-.. code-block:: text
-
-    provisioning
-    provisioning/files
 
 **data-server.example.com**
 
