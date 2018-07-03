@@ -7,7 +7,8 @@ Using Vagrant to setup a few servers to play with Moodle in combination with: Ap
 
 .. image:: https://raw.githubusercontent.com/juliu-s/vagrant-moodle/master/images/moodle_setup.png
     :alt: Moodle setup
-    :width: 100%
+    :width: 75%
+    :height: 75%
     :align: center
 
 Requirements
