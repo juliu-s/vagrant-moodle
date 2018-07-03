@@ -56,11 +56,11 @@ setsebool httpd_can_network_connect_db=1
 # allow apache to use all ports (redis)
 setsebool httpd_can_network_connect=1
 
-# edit /etc/redis.conf & fix redis requirements
+# edit /etc/redis.conf
 sed -i 's/# maxmemory <bytes>/maxmemory 512M/g' /etc/redis.conf
 sed -i 's/appendonly no/appendonly yes/g' /etc/redis.conf
 
-# create script & copy unit file to to activate changes for redis
+# create script & copy unit file to to activate changes for redis requirements
 cat <<EOF >> /usr/local/bin/redis_req.sh
 #!/bin/sh
 sysctl vm.overcommit_memory=1
@@ -83,3 +83,11 @@ systemctl enable rpcbind.service
 systemctl start rpcbind.service
 systemctl enable httpd24-httpd.service
 systemctl start httpd24-httpd.service
+
+# devide moodle cron
+if [ "$HOSTNAME" == "web1.example.com" ]
+then
+    echo "0,10,20,30,40,50 * * * * apache /opt/rh/rh-php71/root/bin/php /srv/webdata/www/admin/cli/cron.php >/dev/null" > /etc/cron.d/moodle
+else
+    echo "5,15,25,35,45,55 * * * * apache /opt/rh/rh-php71/root/bin/php /srv/webdata/www/admin/cli/cron.php >/dev/null" > /etc/cron.d/moodle
+fi
