@@ -5,9 +5,11 @@ Vagrant Moodle
 
 Using Vagrant to setup a few servers to play with Moodle in combination with: Apache, PHP-FPM, MariaDB, HAProxy, NFS, Moodle and Redis in the following setup:
 
-.. image:: https://raw.githubusercontent.com/juliu-s/vagrant-moodle/master/images/moodle_setup.png
-    :alt: Moodle setup
-    :align: center
+.. class:: no-web
+
+    .. image:: https://raw.githubusercontent.com/juliu-s/vagrant-moodle/master/images/moodle_setup.png
+        :alt: Moodle setup
+        :align: center
 
 Requirements
 ============
