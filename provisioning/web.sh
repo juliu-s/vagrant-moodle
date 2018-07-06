@@ -1,8 +1,7 @@
 #!/bin/sh
 
 # install packages
-yum -y install httpd24 \
-    httpd24-mod_ssl \
+yum -y install httpd \
     mariadb \
     redis \
     rh-php71-php-fpm \
@@ -42,12 +41,12 @@ echo "listen.owner = apache" >> /etc/opt/rh/rh-php71/php-fpm.d/www.conf
 echo "listen.group = apache" >> /etc/opt/rh/rh-php71/php-fpm.d/www.conf
 
 # setup httpd
-sed -i 's/LoadModule mpm_prefork_module modules\/mod_mpm_prefork.so/#LoadModule mpm_prefork_module modules\/mod_mpm_prefork.so/g' /opt/rh/httpd24/root/etc/httpd/conf.modules.d/00-mpm.conf
-sed -i 's/#LoadModule mpm_event_module modules\/mod_mpm_event.so/LoadModule mpm_event_module modules\/mod_mpm_event.so/g' /opt/rh/httpd24/root/etc/httpd/conf.modules.d/00-mpm.conf
-sed -i 's/Listen 80/#Listen 80/g' /opt/rh/httpd24/root/etc/httpd/conf/httpd.conf
-sed -i 's/    DirectoryIndex index.html/    DirectoryIndex index.html index.php/g' /opt/rh/httpd24/root/etc/httpd/conf/httpd.conf
+sed -i 's/LoadModule mpm_prefork_module modules\/mod_mpm_prefork.so/#LoadModule mpm_prefork_module modules\/mod_mpm_prefork.so/g' /etc/httpd/conf.modules.d/00-mpm.conf
+sed -i 's/#LoadModule mpm_event_module modules\/mod_mpm_event.so/LoadModule mpm_event_module modules\/mod_mpm_event.so/g' /etc/httpd/conf.modules.d/00-mpm.conf
+sed -i 's/Listen 80/#Listen 80/g' /etc/httpd/conf/httpd.conf
+sed -i 's/    DirectoryIndex index.html/    DirectoryIndex index.html index.php/g' /etc/httpd/conf/httpd.conf
 # copy moodle vhost
-cp /vagrant/provisioning/files/00_vhost.conf /opt/rh/httpd24/root/etc/httpd/conf.d/00_vhost.conf
+cp /vagrant/provisioning/files/00_vhost.conf /etc/httpd/conf.d/00_vhost.conf
 
 # allow apache to use nfs
 setsebool httpd_use_nfs=1
@@ -81,8 +80,8 @@ systemctl enable redis.service
 systemctl start redis.service
 systemctl enable rpcbind.service
 systemctl start rpcbind.service
-systemctl enable httpd24-httpd.service
-systemctl start httpd24-httpd.service
+systemctl enable httpd.service
+systemctl start httpd.service
 
 # devide moodle cron
 if [ "$HOSTNAME" == "web1.example.com" ]
