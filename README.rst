@@ -107,6 +107,9 @@ To SSH into a server run from this repo:
 * The web servers are automaticlly configured
 * The Moodle application is automatically installed and configured
 
+Usage
+=====
+
 .. code-block:: text
 
     From your host OS, browse localhost:8080 for HAProxy stats
