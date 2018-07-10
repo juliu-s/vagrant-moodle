@@ -17,7 +17,7 @@ Using Vagrant to setup a few servers to play with Moodle in combination with: Ap
                `-----------------'
                   /           \
           ,----------.     ,----------.
-          | web-tst1 |     | web-tst2 | - Apache & PHP
+          | web-tst1 |     | web-tst2 | - Apache, PHP & Redis
           `----------'     `----------'
                     \      /
                 ,-------------.
