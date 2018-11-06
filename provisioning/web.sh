@@ -33,7 +33,10 @@ echo "data-server.example.com:/srv/webexport    /srv/webdata    nfs defaults    
 # mount
 mount -a
 # create extra dir
-mkdir /srv/webdata/www
+if [ "$HOSTNAME" == "web1.example.com" ]
+then
+    mkdir /srv/webdata/www
+fi
 
 # setup php-fpm
 sed -i 's/listen = 127.0.0.1:9000/listen = \/var\/opt\/rh\/rh-php71\/run\/php-fpm\/www/g' /etc/opt/rh/rh-php71/php-fpm.d/www.conf
