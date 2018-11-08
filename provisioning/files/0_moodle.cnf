@@ -16,5 +16,10 @@ thread_cache_size = 4
 
 innodb_stats_on_metadata = OFF
 
+slow_query_log_file = /var/log/mariadb/mariadb-slow.log
+log_queries_not_using_indexes = ON
+long_query_time = 2
+slow_query_log = ON
+
 [mysql]
 default-character-set = utf8mb4

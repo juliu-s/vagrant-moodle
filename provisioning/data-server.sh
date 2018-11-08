@@ -18,14 +18,6 @@ mysql -e "GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,CREATE TEMPORARY TABLES,DROP,
 mysql -e "GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,CREATE TEMPORARY TABLES,DROP,INDEX,ALTER ON moodle.* TO 'moodleuser'@'web1.example.com' IDENTIFIED BY 'yourpassword';"
 mysql -e "GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,CREATE TEMPORARY TABLES,DROP,INDEX,ALTER ON moodle.* TO 'moodleuser'@'web2.example.com' IDENTIFIED BY 'yourpassword';"
 
-# enable slow log
-mysql -e "SET GLOBAL slow_query_log_file = '/var/log/mariadb/mariadb-slow.log';"
-mysql -e "SET GLOBAL log_queries_not_using_indexes = 'ON';"
-mysql -e "SET GLOBAL long_query_time = 2;"
-mysql -e "SET GLOBAL slow_query_log = 'ON';"
-
-systemctl restart  mariadb.service
-
 # install mysqltuner
 cd /home/vagrant
 git clone -q https://github.com/major/MySQLTuner-perl mysqltuner
