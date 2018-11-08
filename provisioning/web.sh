@@ -32,11 +32,16 @@ mkdir /srv/webdata
 echo "data-server.example.com:/srv/webexport    /srv/webdata    nfs defaults    0 0" >> /etc/fstab
 # mount
 mount -a
-# create extra dir
-if [ "$HOSTNAME" == "web1.example.com" ]
+# create dir for documentroot
+if [ "$HOSTNAME" == "web2.example.com" ]
 then
     mkdir /srv/webdata/www
 fi
+
+# create dir for local caching and fix selinux
+mkdir /tmp/moodle_cache_dir
+semanage fcontext -a -t httpd_sys_rw_content_t /tmp/moodle_temp_dir
+restorecon -v /tmp/moodle_temp_dir/
 
 # setup php-fpm
 sed -i 's/listen = 127.0.0.1:9000/listen = \/var\/opt\/rh\/rh-php71\/run\/php-fpm\/www/g' /etc/opt/rh/rh-php71/php-fpm.d/www.conf
