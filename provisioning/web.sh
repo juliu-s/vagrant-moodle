@@ -49,7 +49,8 @@ then
 fi
 
 # create dir for local caching and fix selinux
-mkdir /tmp/moodle_cache_dir
+mkdir /tmp/moodle_temp_dir
+chown apache: /tmp/moodle_temp_dir
 semanage fcontext -a -t httpd_sys_rw_content_t /tmp/moodle_temp_dir
 restorecon -v /tmp/moodle_temp_dir/
 
