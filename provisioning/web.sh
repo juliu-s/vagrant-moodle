@@ -25,6 +25,13 @@ yum -y install httpd \
     sclo-php71-php-pecl-redis \
     sclo-php71-php-pecl-igbinary
 
+# optimeze php-opcache -> https://docs.moodle.org/35/en/OPcache
+sed -i 's/4000/10000/g' /etc/opt/rh/rh-php71/php.d/10-opcache.ini
+sed -i 's/;opcache\.revalidate_freq=2/opcache\.revalidate_freq=60/g' /etc/opt/rh/rh-php71/php.d/10-opcache.ini
+sed -i 's/;opcache\.use_cwd=1/opcache\.use_cwd=1/g' /etc/opt/rh/rh-php71/php.d/10-opcache.ini
+sed -i 's/;opcache\.validate_timestamps=1/opcache\.validate_timestamps=1/g' /etc/opt/rh/rh-php71/php.d/10-opcache.ini
+sed -i 's/;opcache\.save_comments=1/opcache\.save_comments=1/g' /etc/opt/rh/rh-php71/php.d/10-opcache.ini
+sed -i 's/;opcache\.enable_file_override=0/opcache\.enable_file_override=0/g' /etc/opt/rh/rh-php71/php.d/10-opcache.ini
 
 # create mountpoint
 mkdir /srv/webdata
