@@ -97,8 +97,6 @@ systemctl enable rh-php71-php-fpm.service
 systemctl start rh-php71-php-fpm.service
 systemctl enable redis.service
 systemctl start redis.service
-systemctl enable rpcbind.service
-systemctl start rpcbind.service
 systemctl enable httpd.service
 systemctl start httpd.service
 
