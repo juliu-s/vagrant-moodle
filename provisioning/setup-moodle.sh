@@ -24,19 +24,7 @@ cd
 
 su -s /bin/bash -c "/opt/rh/rh-php71/root/bin/php /srv/webdata/www/admin/cli/upgrade.php --non-interactive" apache
 
-# add redis config for Moodle
-cat <<EOF >> /srv/webdata/www/config.php
-//REDIS
-\$CFG->session_handler_class = '\core\session\redis';
-\$CFG->session_redis_host = '127.0.0.1';
-\$CFG->session_redis_port = 6379;  // Optional.
-\$CFG->session_redis_database = 0;  // Optional, default is db 0.
-\$CFG->session_redis_prefix = ''; // Optional, default is don't set one.
-\$CFG->session_redis_acquire_lock_timeout = 120;
-\$CFG->session_redis_lock_expire = 7200;
-EOF
-
-# add local cache dir (nfs is slow)
+# add local cache dir for Moodle (nfs is slow)
 echo -e "\n// Intended for local node caching." >> /srv/webdata/www/config.php
 echo "\$CFG->localcachedir = '/tmp/moodle_temp_dir';    // Intended for local node caching." >> /srv/webdata/www/config.php
 
