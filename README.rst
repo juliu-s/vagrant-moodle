@@ -15,11 +15,11 @@ Using Vagrant to setup a few servers to play with Moodle in combination with: Ap
                ,-----------------.
                |       lb        | - Sticky sessions
                `-----------------'
-                  /           \
-          ,----------.     ,----------.
-          | web-tst1 |     | web-tst2 | - Apache, PHP & Redis
-          `----------'     `----------'
-                    \      /
+                  /    |       \
+     ,----------. ,----------. ,----------.
+     | web-tst0 | | web-tst1 | | web-tst2 | - Apache, PHP & Redis
+     `----------' `----------' `----------'
+                    \  |   /
                 ,-------------.
                 | data-server | - MariaDB & NFS
                 `-------------'
@@ -57,6 +57,8 @@ Details
 | Hostname                            | IP              | Specs         |
 +=====================================+=================+===============+
 | data-server.example.com             | 192.168.100.100 | 2 CPU, 2048MB |
++-------------------------------------+-----------------+---------------+
+| web0.example.com                    | 192.168.100.110 | 1 CPU, 1024MB |
 +-------------------------------------+-----------------+---------------+
 | web1.example.com                    | 192.168.100.111 | 1 CPU, 1024MB |
 +-------------------------------------+-----------------+---------------+
@@ -102,7 +104,7 @@ To SSH into a server run from this repo:
 
 * The HAProxy server is automatically configured
 
-**web1 & 2.example.com**
+**web0, web1 and 2.example.com**
 
 * The web servers are automaticlly configured
 * The Moodle application is automatically installed and configured
