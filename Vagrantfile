@@ -26,17 +26,29 @@ Vagrant.configure("2") do |config|
       vm.cpus = 1
     end
     lb.vm.network :forwarded_port, guest: 80, host: 8383
-    lb.vm.network :forwarded_port, guest: 8080, host: 8080
+    lb.vm.network :forwarded_port, guest: 8080, host: 9090
     lb.vm.provision "shell", path: "provisioning/common.sh"
     lb.vm.provision "shell", path: "provisioning/lb.sh"
+  end
+
+  config.vm.define :"web0" do |web0|
+    web0.vm.hostname = "web0.example.com"
+    web0.vm.network "private_network", ip: "192.168.100.110"
+    web0.vm.provider :virtualbox do |vm|
+      vm.memory = 2048
+      vm.cpus = 2
+    end
+    web0.vm.network :forwarded_port, guest: 80, host: 8080
+    web0.vm.provision :shell, path: "provisioning/common.sh"
+    web0.vm.provision :shell, path: "provisioning/web.sh"
   end
 
   config.vm.define :"web1" do |web1|
     web1.vm.hostname = "web1.example.com"
     web1.vm.network "private_network", ip: "192.168.100.111"
     web1.vm.provider :virtualbox do |vm|
-      vm.memory = 1024
-      vm.cpus = 1
+      vm.memory = 2048
+      vm.cpus = 2
     end
     web1.vm.network :forwarded_port, guest: 80, host: 8181
     web1.vm.provision :shell, path: "provisioning/common.sh"
@@ -47,8 +59,8 @@ Vagrant.configure("2") do |config|
     web2.vm.hostname = "web2.example.com"
     web2.vm.network "private_network", ip: "192.168.100.112"
     web2.vm.provider :virtualbox do |vm|
-      vm.memory = 1024
-      vm.cpus = 1
+      vm.memory = 2048
+      vm.cpus = 2
     end
     web2.vm.network :forwarded_port, guest: 80, host: 8282
     web2.vm.provision :shell, path: "provisioning/common.sh"
