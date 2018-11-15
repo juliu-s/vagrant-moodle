@@ -114,7 +114,8 @@ Usage
 
 .. code-block:: text
 
-    From your host OS, browse localhost:8080 for HAProxy stats
+    From your host OS, browse localhost:9090 for HAProxy stats
+    From your host OS, browse localhost:8080 for web0 webpage
     From your host OS, browse localhost:8181 for web1 webpage
     From your host OS, browse localhost:8282 for web2 webpage
     From your host OS, browse localhost:8383 for the loadbalanced webpage
