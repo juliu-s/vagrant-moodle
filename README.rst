@@ -73,7 +73,7 @@ Check the following directories in this repo for the provisioning scripts and co
 
     provisioning
     provisioning/files
-    provisioning/files/setup-moodle.sh << to change the version of Moodle
+    provisioning/setup-moodle.sh << to change the version of Moodle
 
 When you're done run **vagrant destroy**, or if you want to continue later run **vagrant suspend** and **vagrant resume** to continue again.
 
