@@ -3,7 +3,7 @@ Vagrant Moodle
 
 .. contents::
 
-Using Vagrant to setup a few servers to play with Moodle in combination with: Apache, PHP-FPM, MariaDB, HAProxy, NFS, Moodle and Redis in the following setup:
+Using Vagrant to setup a few servers with increased logging to play with Moodle in combination with: Apache, PHP-FPM, MariaDB, HAProxy, NFS, Moodle and Redis in the following setup:
 
 .. code-block:: text
 
@@ -85,20 +85,12 @@ To SSH into a server run from this repo:
 * vagrant ssh data-server
 * vagrant ssh web1
 * vagrant ssh web2
+* vagrant ssh web3
 * vagrant ssh lb
 
 **data-server.example.com**
 
-* The database and NFS export are automatically created
-
-.. code-block:: text
-
-    mariadb username: moodleuser
-    mariadb password: yourpassword
-    mariadb database: moodle
-    mariadb host: data-server.example.com / 192.168.100.100
-
-    nfs export: /srv/webexport web0.example.com(rw,no_root_squash) web1.example.com(rw,no_root_squash) web2.example.com(rw,no_root_squash)
+* The database, Redis and NFS export are automatically configured
 
 **lb.example.com**
 
