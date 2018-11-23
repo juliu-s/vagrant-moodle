@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # prepare dirs
 mkdir /srv/webdata/moodledata

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # install packages, install config & start service
 yum -y install mariadb-server \
