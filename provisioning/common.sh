@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # set time
 timedatectl set-ntp true
@@ -12,6 +12,7 @@ yum -y install tree \
     vim \
     bind-utils \
     git \
+    lsof \
     iotop \
     iftop \
     tracer
