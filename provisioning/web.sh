@@ -1,9 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
 # install packages
 yum -y install httpd \
     mariadb \
-    redis \
     rh-php71-php-fpm \
     rh-php71-php-cli \
     rh-php71-php-common \
@@ -55,55 +54,59 @@ semanage fcontext -a -t httpd_sys_rw_content_t /tmp/moodle_temp_dir
 restorecon -v /tmp/moodle_temp_dir/
 
 # setup php-fpm
-sed -i 's/listen = 127.0.0.1:9000/listen = \/var\/opt\/rh\/rh-php71\/run\/php-fpm\/www/g' /etc/opt/rh/rh-php71/php-fpm.d/www.conf
+mkdir /var/log/php-fpm
+sed -i 's/log_level = notice/log_level = debug/g' /etc/opt/rh/rh-php71/php-fpm.conf
+sed -i 's/error_log = \/var\/opt\/rh\/rh-php71\/log\/php-fpm\/error.log/error_log = \/var\/log\/php-fpm\/error.log/g' /etc/opt/rh/rh-php71/php-fpm.conf
+
+echo "slowlog = /var/opt/rh/rh-php71/log/php-fpm/www-slow.log" >> /etc/opt/rh/rh-php71/php-fpm.d/www.conf
+echo "access.log = /var/log/php-fpm/www-access.log" >> /etc/opt/rh/rh-php71/php-fpm.d/www.conf
+echo "php_admin_value[error_log] = /var/log/php-fpm/www-error.log" >> /etc/opt/rh/rh-php71/php-fpm.d/www.conf
+echo "catch_workers_output = yes" >> /etc/opt/rh/rh-php71/php-fpm.d/www.conf
 echo "listen.owner = apache" >> /etc/opt/rh/rh-php71/php-fpm.d/www.conf
 echo "listen.group = apache" >> /etc/opt/rh/rh-php71/php-fpm.d/www.conf
+
+sed -i 's/listen = 127.0.0.1:9000/listen = \/var\/opt\/rh\/rh-php71\/run\/php-fpm\/www/g' /etc/opt/rh/rh-php71/php-fpm.d/www.conf
 
 # setup httpd
 sed -i 's/LoadModule mpm_prefork_module modules\/mod_mpm_prefork.so/#LoadModule mpm_prefork_module modules\/mod_mpm_prefork.so/g' /etc/httpd/conf.modules.d/00-mpm.conf
 sed -i 's/#LoadModule mpm_event_module modules\/mod_mpm_event.so/LoadModule mpm_event_module modules\/mod_mpm_event.so/g' /etc/httpd/conf.modules.d/00-mpm.conf
 sed -i 's/Listen 80/#Listen 80/g' /etc/httpd/conf/httpd.conf
+sed -i 's/LogLevel warn/LogLevel debug/g' /etc/httpd/conf/httpd.conf
 sed -i 's/    DirectoryIndex index.html/    DirectoryIndex index.html index.php/g' /etc/httpd/conf/httpd.conf
+
+cat <<EOF >> /etc/httpd/conf/httpd.conf
+# set timeout to 10 min
+Timeout 600
+ProxyTimeout 600
+EOF
+
 # copy moodle vhost
 cp /vagrant/provisioning/files/00_vhost.conf /etc/httpd/conf.d/00_vhost.conf
 
 # allow apache to use nfs
-setsebool httpd_use_nfs=1
+setsebool -P httpd_use_nfs on
 # allow appache to connect to db on the network
-setsebool httpd_can_network_connect_db=1
+setsebool -P httpd_can_network_connect_db on
 # allow apache to use all ports (redis)
-setsebool httpd_can_network_connect=1
-
-# edit /etc/redis.conf
-sed -i 's/# maxmemory <bytes>/maxmemory 512M/g' /etc/redis.conf
-sed -i 's/appendonly no/appendonly yes/g' /etc/redis.conf
-
-# create script & copy unit file to to activate changes for redis requirements
-cat <<EOF >> /usr/local/bin/redis_req.sh
-#!/bin/sh
-sysctl vm.overcommit_memory=1
-echo never > /sys/kernel/mm/transparent_hugepage/enabled
-echo never > /sys/kernel/mm/transparent_hugepage/defrag
-echo 512 > /proc/sys/net/core/somaxconn
-EOF
-chmod 750 /usr/local/bin/redis_req.sh
-cp /vagrant/provisioning/files/redis_rq.service /etc/systemd/system/redis_rq.service
-systemctl daemon-reload
+setsebool -P httpd_can_network_connect on
 
 # start & enable services
-systemctl enable redis_rq.service
-systemctl start redis_rq.service
 systemctl enable rh-php71-php-fpm.service
 systemctl start rh-php71-php-fpm.service
-systemctl enable redis.service
-systemctl start redis.service
 systemctl enable httpd.service
 systemctl start httpd.service
 
+# create "homedir" for apache, otherwise cron won't run
+mkdir -p /opt/rh/httpd24/root/usr/share/httpd
 # devide moodle cron
-if [ "$HOSTNAME" == "web1.example.com" ]
+if [ "$HOSTNAME" == "web0.example.com" ]
 then
-    echo "0,10,20,30,40,50 * * * * apache /opt/rh/rh-php71/root/bin/php /srv/webdata/www/admin/cli/cron.php >/dev/null" > /etc/cron.d/moodle
+    touch /srv/webdata/moodle_cron.log
+    chown apache: /srv/webdata/moodle_cron.log
+    echo "0,9,18,27,36,45,54 * * * * apache /opt/rh/rh-php71/root/bin/php /srv/webdata/www/admin/cli/cron.php >> /srv/webdata/moodle_cron.log" > /etc/cron.d/moodle
+elif [ "$HOSTNAME" == "web1.example.com" ]
+then
+    echo "3,12,21,30,39,48,57 * * * * apache /opt/rh/rh-php71/root/bin/php /srv/webdata/www/admin/cli/cron.php >> /srvwebdata//moodle_cron.log" > /etc/cron.d/moodle
 else
-    echo "5,15,25,35,45,55 * * * * apache /opt/rh/rh-php71/root/bin/php /srv/webdata/www/admin/cli/cron.php >/dev/null" > /etc/cron.d/moodle
+    echo "6,15,24,33,42,51 * * * * apache /opt/rh/rh-php71/root/bin/php /srv/webdata/www/admin/cli/cron.php >> /srv/webdata/moodle_cron.log" > /etc/cron.d/moodle
 fi
