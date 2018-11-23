@@ -28,6 +28,15 @@ su -s /bin/bash -c "/opt/rh/rh-php71/root/bin/php /srv/webdata/www/admin/cli/upg
 echo -e "\n// Intended for local node caching." >> /srv/webdata/www/config.php
 echo "\$CFG->localcachedir = '/tmp/moodle_temp_dir';    // Intended for local node caching." >> /srv/webdata/www/config.php
 
+# add redis cache stores
+cp /vagrant/provisioning/files/muc_config.php /srv/webdata/moodledata/muc/config.php
+chmod 666 /srv/webdata/moodledata/muc/config.php
+chown apache: /srv/webdata/moodledata/muc/config.php
+
+# add redis test cache store
+su - vagrant -c "ssh -o StrictHostKeyChecking=no data-server.example.com 'sudo mysql < /vagrant/provisioning/files/set_redis_test_server.sql'"
+su -s /bin/bash -c "/opt/rh/rh-php71/root/bin/php /srv/webdata/www/admin/cli/purge_caches.php" apache
+
 # copy info pages for debugging
 cp /vagrant/provisioning/files/hostname.php /srv/webdata/www/hostname.php
 cp /vagrant/provisioning/files/phpinfo.php /srv/webdata/www/phpinfo.php
@@ -43,4 +52,3 @@ echo "url: http://localhost:8383"
 echo "username: admin"
 echo "password: AdminAdmin123!"
 echo " "
-echo "Don't forget to configure Redis cache in the UI"
