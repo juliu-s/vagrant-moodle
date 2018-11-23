@@ -13,15 +13,15 @@ Using Vagrant to setup a few servers to play with Moodle in combination with: Ap
                         |
                         v
                ,-----------------.
-               |       lb        | - Sticky sessions
+               |       lb        | - HAProxy with sticky sessions
                `-----------------'
                   /    |       \
      ,----------. ,----------. ,----------.
-     | web-tst0 | | web-tst1 | | web-tst2 | - Apache, PHP & Redis
+     | web-tst0 | | web-tst1 | | web-tst2 | - Apache & PHP-FPM
      `----------' `----------' `----------'
                     \  |   /
                 ,-------------.
-                | data-server | - MariaDB & NFS
+                | data-server | - MariaDB, Redis & NFS
                 `-------------'
 
 
@@ -56,15 +56,15 @@ Details
 +-------------------------------------+-----------------+---------------+
 | Hostname                            | IP              | Specs         |
 +=====================================+=================+===============+
-| data-server.example.com             | 192.168.100.100 | 2 CPU, 2048MB |
+| data-server.example.com             | 192.168.100.100 | 2 CPU, 2048M  |
 +-------------------------------------+-----------------+---------------+
-| web0.example.com                    | 192.168.100.110 | 1 CPU, 1024MB |
+| web0.example.com                    | 192.168.100.110 | 2 CPU, 2048M  |
 +-------------------------------------+-----------------+---------------+
-| web1.example.com                    | 192.168.100.111 | 1 CPU, 1024MB |
+| web1.example.com                    | 192.168.100.111 | 2 CPU, 2048M  |
 +-------------------------------------+-----------------+---------------+
-| web2.example.com                    | 192.168.100.112 | 1 CPU, 1024MB |
+| web2.example.com                    | 192.168.100.112 | 2 CPU, 2048M  |
 +-------------------------------------+-----------------+---------------+
-| lb.example.com                      | 192.168.100.150 | 1 CPU, 512MB  |
+| lb.example.com                      | 192.168.100.150 | 1 CPU, 512M   |
 +-------------------------------------+-----------------+---------------+
 
 Check the following directories in this repo for the provisioning scripts and configuration files.
@@ -98,7 +98,7 @@ To SSH into a server run from this repo:
     mariadb database: moodle
     mariadb host: data-server.example.com / 192.168.100.100
 
-    nfs export: /srv/webexport web1.example.com(rw,no_root_squash) web2.example.com(rw,no_root_squash)
+    nfs export: /srv/webexport web0.example.com(rw,no_root_squash) web1.example.com(rw,no_root_squash) web2.example.com(rw,no_root_squash)
 
 **lb.example.com**
 
