@@ -15,6 +15,7 @@ yum -y install tree \
     lsof \
     iotop \
     iftop \
+    strace \
     tracer
 
 # create direcotries for vim stuff
