@@ -21,7 +21,7 @@ Using Vagrant to setup a few servers with increased logging to play with Moodle 
      `----------' `----------' `----------'
                     \  |   /
                 ,-------------.
-                | data-server | - MariaDB, Redis & NFS
+                | data-server | - MariaDB, InfluxDB, Redis, NFS & Grafana
                 `-------------'
 
 
@@ -106,11 +106,15 @@ Usage
 
 .. code-block:: text
 
+    From your host OS, browse localhost:3000 for Grafana
     From your host OS, browse localhost:9090 for HAProxy stats
     From your host OS, browse localhost:8080 for web0 webpage
     From your host OS, browse localhost:8181 for web1 webpage
     From your host OS, browse localhost:8282 for web2 webpage
     From your host OS, browse localhost:8383 for the loadbalanced webpage
+
+    Grafana username: admin
+    Grafana password: admin123
 
     Moodle username: admin
     Moodle password: AdminAdmin123!
