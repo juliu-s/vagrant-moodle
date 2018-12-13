@@ -14,6 +14,7 @@ Vagrant.configure("2") do |config|
       vm.memory = 2048
       vm.cpus = 2
     end
+    dataserver.vm.network :forwarded_port, guest: 3000, host: 3000
     dataserver.vm.provision :shell, path: "provisioning/common.sh"
     dataserver.vm.provision :shell, path: "provisioning/data-server.sh"
   end
