@@ -4,7 +4,20 @@
 timedatectl set-ntp true
 timedatectl set-timezone 'Europe/Amsterdam'
 
-# install epel + tools
+# add influxdb repo for influxdb and telegraf
+cat <<EOF >> /etc/yum.repos.d/influxdb.repo
+[influxdb]
+name = InfluxDB Repository - RHEL \$releasever
+baseurl = https://repos.influxdata.com/rhel/\$releasever/\$basearch/stable
+enabled = 1
+gpgcheck = 1
+gpgkey = https://repos.influxdata.com/influxdb.key
+EOF
+
+# update yum cache
+yum makecache fast -y
+
+# install extra repo's and packages
 yum -y install epel-release
 yum -y install centos-release-scl
 yum -y install tree \
@@ -12,11 +25,27 @@ yum -y install tree \
     vim \
     bind-utils \
     git \
+    telegraf \
     lsof \
     iotop \
+    tcpdump \
     iftop \
     strace \
     tracer
+
+# configure basic telegraf
+sed -i 's/#\ urls\ =\ \["http:\/\/127\.0\.0\.1:8086"\]/urls\ =\ \["http:\/\/192\.168\.100\.100:8086"\]/g' /etc/telegraf/telegraf.conf
+sed -i 's/#\ database\ =\ \"telegraf\"/database\ =\ "telegraf"/g' /etc/telegraf/telegraf.conf
+sed -i 's/#\ retention_policy/retention_policy/g' /etc/telegraf/telegraf.conf
+sed -i 's/#\ timeout\ =\ "5s"/timeout = "0s"/g' /etc/telegraf/telegraf.conf
+sed -i 's/#\ username\ =\ "telegraf"/username\ =\ "username"/g' /etc/telegraf/telegraf.conf
+sed -i 's/#\ password\ =\ "metricsmetricsmetricsmetrics"/password\ = "password"/g' /etc/telegraf/telegraf.conf
+
+cp /vagrant/provisioning/files/telegraf_basics.conf /etc/telegraf/telegraf.d/telegraf_basics.conf
+
+# start collecting
+systemctl enable telegraf
+systemctl start telegraf
 
 # create direcotries for vim stuff
 mkdir -p ~/.vim/bundle
