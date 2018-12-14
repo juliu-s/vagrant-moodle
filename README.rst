@@ -51,7 +51,7 @@ Details
 =======
 
 * Check the Vagrant file, config and bash scripts in the provisioning directory
-* When you run **vagrant up** you get 4 CentOS 7 machines with an second network adapter:
+* When you run **vagrant up** you get 5 CentOS 7 machines with an second network adapter:
 
 +-------------------------------------+-----------------+---------------+
 | Hostname                            | IP              | Specs         |
@@ -90,7 +90,7 @@ To SSH into a server run from this repo:
 
 **data-server.example.com**
 
-* The database, Redis and NFS export are automatically configured
+* The data server is automatically configured
 
 **lb.example.com**
 
