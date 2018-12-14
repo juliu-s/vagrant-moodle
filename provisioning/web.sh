@@ -24,6 +24,9 @@ yum -y install httpd \
     sclo-php71-php-pecl-redis \
     sclo-php71-php-pecl-igbinary
 
+# add apache config for haproxy
+cp /vagrant/provisioning/files/telegraf_apache.conf /etc/telegraf/telegraf.d/telegraf_apache.conf
+
 # optimize php-opcache -> https://docs.moodle.org/35/en/OPcache
 sed -i 's/4000/10000/g' /etc/opt/rh/rh-php71/php.d/10-opcache.ini
 sed -i 's/;opcache\.revalidate_freq=2/opcache\.revalidate_freq=60/g' /etc/opt/rh/rh-php71/php.d/10-opcache.ini
@@ -74,10 +77,16 @@ sed -i 's/Listen 80/#Listen 80/g' /etc/httpd/conf/httpd.conf
 sed -i 's/LogLevel warn/LogLevel debug/g' /etc/httpd/conf/httpd.conf
 sed -i 's/    DirectoryIndex index.html/    DirectoryIndex index.html index.php/g' /etc/httpd/conf/httpd.conf
 
+# increase timeouts and configure stats page for telegraf
 cat <<EOF >> /etc/httpd/conf/httpd.conf
 # set timeout to 10 min
 Timeout 600
 ProxyTimeout 600
+
+<Location /server-status>
+    SetHandler server-status
+    Require ip 127.0.0.1
+</Location>
 EOF
 
 # copy moodle vhost
@@ -96,8 +105,12 @@ systemctl start rh-php71-php-fpm.service
 systemctl enable httpd.service
 systemctl start httpd.service
 
+# restart telegraf
+systemctl restart telegraf.service
+
 # create "homedir" for apache, otherwise cron won't run
 mkdir -p /opt/rh/httpd24/root/usr/share/httpd
+
 # devide moodle cron
 if [ "$HOSTNAME" == "web0.example.com" ]
 then

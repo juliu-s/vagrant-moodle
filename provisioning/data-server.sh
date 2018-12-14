@@ -53,7 +53,7 @@ cp /vagrant/provisioning/files/grafana_dasboards.yaml /etc/grafana/provisioning/
 cp /vagrant/provisioning/files/grafana_basic_stats_dashboard_template.json /etc/grafana/provisioning/templates/grafana_basic_stats_dashboard.json
 cp /vagrant/provisioning/files/grafana_mariadb_stats_dashboard_template.json /etc/grafana/provisioning/templates/grafana_mariadb_stats_dashboard.json
 cp /vagrant/provisioning/files/grafana_haproxy_stats_dashboard_template.json /etc/grafana/provisioning/templates/grafana_haproxy_stats_dashboard.json
-# apache
+cp /vagrant/provisioning/files/grafana_apache_stats_dashboard_template.json /etc/grafana/provisioning/templates/grafana_apache_stats_dashboard.json
 # php-fpm
 # redis
 # nfs?
@@ -68,6 +68,9 @@ sed -i 's/"title":\ "Service\ -\ MySQL\ Metrics"/"title":\ "MariaDB\ stats"/g' /
 
 # update templates for haproxy stats:
 sed -i 's/${DS_NDF_APP}/telegraf/g' /etc/grafana/provisioning/templates/grafana_haproxy_stats_dashboard.json
+
+# update templates for apache stats:
+sed -i 's/${DS_INFLUXPROD}/telegraf/g' /etc/grafana/provisioning/templates/grafana_apache_stats_dashboard.json
 
 # fix permissions
 chown -R root:grafana /etc/grafana/provisioning
