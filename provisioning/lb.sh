@@ -4,6 +4,9 @@
 yum -y install haproxy \
     socat
 
+# add telegraf config for haproxy
+cp /vagrant/provisioning/files/telegraf_haproxy.conf /etc/telegraf/telegraf.d/telegraf_haproxy.conf
+
 # copy config
 cp /vagrant/provisioning/files/haproxy.cfg /etc/haproxy/haproxy.cfg
 

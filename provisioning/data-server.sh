@@ -22,6 +22,9 @@ yum -y install mariadb-server \
     influxdb \
     grafana
 
+# add telegraf config for mariadb
+cp /vagrant/provisioning/files/telegraf_mariadb.conf /etc/telegraf/telegraf.d/telegraf_mariadb.conf
+
 # configure influxdb
 sed -i 's/#\ bind-address\ =\ ":8086"/bind-address\ =\ "192\.168\.100\.100:8086"/g' /etc/influxdb/influxdb.conf
 sed -i 's/#\ auth-enabled\ =\ false/auth-enabled\ =\ true/g' /etc/influxdb/influxdb.conf
@@ -49,8 +52,11 @@ cp /vagrant/provisioning/files/grafana_dasboards.yaml /etc/grafana/provisioning/
 # copy dashboards files from template
 cp /vagrant/provisioning/files/grafana_basic_stats_dashboard_template.json /etc/grafana/provisioning/templates/grafana_basic_stats_dashboard.json
 cp /vagrant/provisioning/files/grafana_mariadb_stats_dashboard_template.json /etc/grafana/provisioning/templates/grafana_mariadb_stats_dashboard.json
-# haproxy
-# ...
+cp /vagrant/provisioning/files/grafana_haproxy_stats_dashboard_template.json /etc/grafana/provisioning/templates/grafana_haproxy_stats_dashboard.json
+# apache
+# php-fpm
+# redis
+# nfs?
 
 # update templates for basic stats:
 sed -i 's/${DS_INFLUXDB}/telegraf/g' /etc/grafana/provisioning/templates/grafana_basic_stats_dashboard.json
@@ -60,11 +66,11 @@ sed -i 's/"title":\ "Telegraf\ -\ system\ metrics"/"title":\ "Basic stats"/g' /e
 sed -i 's/${DS_INFLUXDB}/telegraf/g' /etc/grafana/provisioning/templates/grafana_mariadb_stats_dashboard.json
 sed -i 's/"title":\ "Service\ -\ MySQL\ Metrics"/"title":\ "MariaDB\ stats"/g' /etc/grafana/provisioning/templates/grafana_mariadb_stats_dashboard.json
 
+# update templates for haproxy stats:
+sed -i 's/${DS_NDF_APP}/telegraf/g' /etc/grafana/provisioning/templates/grafana_haproxy_stats_dashboard.json
+
 # fix permissions
 chown -R root:grafana /etc/grafana/provisioning
-
-# add telegraf config for mariadb
-cp /vagrant/provisioning/files/telegraf_mariadb.conf /etc/telegraf/telegraf.d/telegraf_mariadb.conf
 
 # copy mysql config
 cp /vagrant/provisioning/files/0_moodle.cnf /etc/my.cnf.d/0_moodle.cnf
