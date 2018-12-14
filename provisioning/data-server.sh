@@ -22,8 +22,9 @@ yum -y install mariadb-server \
     influxdb \
     grafana
 
-# add telegraf config for mariadb
+# add telegraf config for mariadb and redis
 cp /vagrant/provisioning/files/telegraf_mariadb.conf /etc/telegraf/telegraf.d/telegraf_mariadb.conf
+cp /vagrant/provisioning/files/telegraf_redis.conf /etc/telegraf/telegraf.d/telegraf_redis.conf
 
 # configure influxdb
 sed -i 's/#\ bind-address\ =\ ":8086"/bind-address\ =\ "192\.168\.100\.100:8086"/g' /etc/influxdb/influxdb.conf
@@ -54,9 +55,7 @@ cp /vagrant/provisioning/files/grafana_basic_stats_dashboard_template.json /etc/
 cp /vagrant/provisioning/files/grafana_mariadb_stats_dashboard_template.json /etc/grafana/provisioning/templates/grafana_mariadb_stats_dashboard.json
 cp /vagrant/provisioning/files/grafana_haproxy_stats_dashboard_template.json /etc/grafana/provisioning/templates/grafana_haproxy_stats_dashboard.json
 cp /vagrant/provisioning/files/grafana_apache_stats_dashboard_template.json /etc/grafana/provisioning/templates/grafana_apache_stats_dashboard.json
-# php-fpm
-# redis
-# nfs?
+cp /vagrant/provisioning/files/grafana_redis_stats_dashboard_template.json /etc/grafana/provisioning/templates/grafana_redis_stats_dashboard.json
 
 # update templates for basic stats:
 sed -i 's/${DS_INFLUXDB}/telegraf/g' /etc/grafana/provisioning/templates/grafana_basic_stats_dashboard.json
@@ -72,6 +71,9 @@ sed -i 's/${DS_NDF_APP}/telegraf/g' /etc/grafana/provisioning/templates/grafana_
 # update templates for apache stats:
 sed -i 's/${DS_INFLUXPROD}/telegraf/g' /etc/grafana/provisioning/templates/grafana_apache_stats_dashboard.json
 
+# update templates for redis stats:
+sed -i 's/${DS_INFLUXDB}/telegraf/g' /etc/grafana/provisioning/templates/grafana_redis_stats_dashboard.json
+
 # fix permissions
 chown -R root:grafana /etc/grafana/provisioning
 
@@ -84,9 +86,6 @@ chown mysql: /var/log/mariadb/*
 
 systemctl enable mariadb.service
 systemctl start mariadb.service
-
-# start collecting mariadb stats
-systemctl restart telegraf.service
 
 # create database
 mysql -e "CREATE DATABASE moodle DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
@@ -133,3 +132,6 @@ systemctl enable redis.service
 systemctl start redis.service
 systemctl start grafana-server
 systemctl enable grafana-server
+
+# start collecting mariadb and redis stats
+systemctl restart telegraf.service
