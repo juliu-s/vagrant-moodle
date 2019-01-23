@@ -1,20 +1,7 @@
 #!/bin/bash
 
 # add grafana repo
-cat <<EOF >> /etc/yum.repos.d/grafana.repo
-[grafana]
-name=grafana
-baseurl=https://packagecloud.io/grafana/stable/el/7/\$basearch
-repo_gpgcheck=1
-enabled=1
-gpgcheck=1
-gpgkey=https://packagecloud.io/gpg.key https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana
-sslverify=1
-sslcacert=/etc/pki/tls/certs/ca-bundle.crt
-EOF
-
-# update yum cache
-yum makecache fast -y
+curl -s https://packagecloud.io/install/repositories/grafana/stable/script.rpm.sh | sudo bash
 
 # install packages, install config & start service
 yum -y install mariadb-server \
@@ -103,7 +90,7 @@ chown -R vagrant: /home/vagrant
 # export nfs
 mkdir /srv/webexport
 echo "/srv/webexport web0.example.com(rw,no_root_squash) web1.example.com(rw,no_root_squash) web2.example.com(rw,no_root_squash)" >> /etc/exports
-exportfs -avr
+exportfs -ar
 
 # edit /etc/redis.conf
 sed -i 's/bind 127.0.0.1/bind 192.168.100.100/g' /etc/redis.conf
