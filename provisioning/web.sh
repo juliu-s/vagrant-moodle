@@ -62,6 +62,7 @@ sed -i 's/log_level = notice/log_level = debug/g' /etc/opt/rh/rh-php71/php-fpm.c
 sed -i 's/error_log = \/var\/opt\/rh\/rh-php71\/log\/php-fpm\/error.log/error_log = \/var\/log\/php-fpm\/error.log/g' /etc/opt/rh/rh-php71/php-fpm.conf
 
 echo "slowlog = /var/opt/rh/rh-php71/log/php-fpm/www-slow.log" >> /etc/opt/rh/rh-php71/php-fpm.d/www.conf
+echo "request_slowlog_timeout = 10s" >> /etc/opt/rh/rh-php71/php-fpm.d/www.conf
 echo "access.log = /var/log/php-fpm/www-access.log" >> /etc/opt/rh/rh-php71/php-fpm.d/www.conf
 echo "php_admin_value[error_log] = /var/log/php-fpm/www-error.log" >> /etc/opt/rh/rh-php71/php-fpm.d/www.conf
 echo "catch_workers_output = yes" >> /etc/opt/rh/rh-php71/php-fpm.d/www.conf
