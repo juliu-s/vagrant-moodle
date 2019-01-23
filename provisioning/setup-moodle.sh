@@ -6,7 +6,7 @@ chmod 777 /srv/webdata/moodledata
 chown -R apache: /srv/*
 
 # get moodle
-version="MOODLE_35_STABLE"
+version="MOODLE_36_STABLE"
 echo " "
 echo "installing $version"
 echo " "
@@ -34,7 +34,7 @@ chmod 666 /srv/webdata/moodledata/muc/config.php
 chown apache: /srv/webdata/moodledata/muc/config.php
 
 # add redis test cache store
-su - vagrant -c "ssh -o StrictHostKeyChecking=no data-server.example.com 'sudo mysql < /vagrant/provisioning/files/set_redis_test_server.sql'"
+mysql -h data-server.example.com -u moodleuser --password="yourpassword" < /vagrant/provisioning/files/set_redis_test_server.sql
 su -s /bin/bash -c "/opt/rh/rh-php71/root/bin/php /srv/webdata/www/admin/cli/purge_caches.php" apache
 
 # copy info pages for debugging
@@ -42,10 +42,6 @@ cp /vagrant/provisioning/files/hostname.php /srv/webdata/www/hostname.php
 cp /vagrant/provisioning/files/phpinfo.php /srv/webdata/www/phpinfo.php
 chown apache: /srv/webdata/www/hostname.php
 chown apache: /srv/webdata/www/phpinfo.php
-
-# restart php & apache
-systemctl restart httpd.service
-systemctl restart rh-php71-php-fpm.service
 
 echo " "
 echo "Grafana:"
