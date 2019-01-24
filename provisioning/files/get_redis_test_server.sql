@@ -4,11 +4,11 @@ SELECT
 FROM
     mdl_config_plugins
 WHERE
-    id = 156;
+    id = 155;
 
 SELECT
     value
 FROM
     mdl_config_plugins
 WHERE
-    id = 158;
+    id = 157;
