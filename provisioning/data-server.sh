@@ -1,13 +1,26 @@
 #!/bin/bash
 
 # add grafana repo
-curl -s https://packagecloud.io/install/repositories/grafana/stable/script.rpm.sh | sudo bash
+cat <<EOF >> /etc/yum.repos.d/grafana.repo
+[grafana]
+name=grafana
+baseurl=https://packages.grafana.com/oss/rpm
+repo_gpgcheck=1
+enabled=1
+gpgcheck=1
+gpgkey=https://packages.grafana.com/gpg.key
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+EOF
 
 # install packages, install config & start service
 yum -y install mariadb-server \
     redis \
     influxdb \
     grafana
+
+# reload systemd-daemon
+systemctl daemon-reload
 
 # add telegraf config for mariadb and redis
 cp /vagrant/provisioning/files/telegraf_mariadb.conf /etc/telegraf/telegraf.d/telegraf_mariadb.conf
@@ -22,7 +35,7 @@ systemctl enable influxdb.service
 systemctl start influxdb.service
 
 # create influxdb user
-sleep 1
+sleep 3
 curl -XPOST "http://192.168.100.100:8086/query" --data-urlencode "q=CREATE USER username WITH PASSWORD 'password' WITH ALL PRIVILEGES"
 
 # configure grafana
@@ -87,10 +100,14 @@ git clone -q https://github.com/major/MySQLTuner-perl mysqltuner
 cd
 chown -R vagrant: /home/vagrant
 
-# export nfs
+# start and enable and export nfs
+systemctl enable nfs-server
+systemctl start nfs-server
+
 mkdir /srv/webexport
 echo "/srv/webexport web0.example.com(rw,no_root_squash) web1.example.com(rw,no_root_squash) web2.example.com(rw,no_root_squash)" >> /etc/exports
-exportfs -ar
+
+exportfs -var
 
 # edit /etc/redis.conf
 sed -i 's/bind 127.0.0.1/bind 192.168.100.100/g' /etc/redis.conf
@@ -111,8 +128,6 @@ cp /vagrant/provisioning/files/redis_rq.service /etc/systemd/system/redis_rq.ser
 systemctl daemon-reload
 
 # start & enable services
-systemctl enable nfs-server
-systemctl start nfs-server
 systemctl enable redis_rq.service
 systemctl start redis_rq.service
 systemctl enable redis.service
