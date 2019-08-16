@@ -3,10 +3,10 @@ UPDATE mdl_config_plugins
 SET
     value = '192.168.100.100:6379'
 WHERE
-    id = 155;
+    name = 'test_server';
 
 UPDATE mdl_config_plugins
 SET
     value = '2'
 WHERE
-    id = 157;
+    name = 'test_serializer';

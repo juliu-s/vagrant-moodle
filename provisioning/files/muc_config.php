@@ -1,6 +1,6 @@
 <?php defined('MOODLE_INTERNAL') || die();
  $configuration = array (
-  'siteidentifier' => '51d14b0b6009c1dd8130a94a4c0fac0f',
+  'siteidentifier' => 'a701a29a04f91c67c7d60f92ab685b89',
   'stores' =>
   array (
     'default_application' =>
@@ -588,12 +588,30 @@
       'simplekeys' => true,
       'simpledata' => true,
       'ttl' => 1800,
-      'invalidationevents' =>
-      array (
-        0 => 'createduser',
-      ),
       'component' => 'core',
       'area' => 'presignup',
+      'selectedsharingoption' => 2,
+      'userinputsharingkey' => '',
+      'sharingoptions' => 2,
+    ),
+    'core/modelfirstanalyses' =>
+    array (
+      'mode' => 4,
+      'simplekeys' => true,
+      'simpledata' => true,
+      'component' => 'core',
+      'area' => 'modelfirstanalyses',
+      'selectedsharingoption' => 2,
+      'userinputsharingkey' => '',
+      'sharingoptions' => 2,
+    ),
+    'core/portfolio_add_button_portfolio_instances' =>
+    array (
+      'mode' => 4,
+      'simplekeys' => true,
+      'staticacceleration' => true,
+      'component' => 'core',
+      'area' => 'portfolio_add_button_portfolio_instances',
       'selectedsharingoption' => 2,
       'userinputsharingkey' => '',
       'sharingoptions' => 2,
@@ -621,6 +639,18 @@
       'selectedsharingoption' => 2,
       'userinputsharingkey' => '',
       'sharingoptions' => 15,
+    ),
+    'mod_forum/forum_is_tracked' =>
+    array (
+      'mode' => 4,
+      'simplekeys' => true,
+      'simpledata' => true,
+      'staticacceleration' => true,
+      'component' => 'mod_forum',
+      'area' => 'forum_is_tracked',
+      'selectedsharingoption' => 2,
+      'userinputsharingkey' => '',
+      'sharingoptions' => 2,
     ),
     'mod_glossary/concepts' =>
     array (
@@ -735,6 +765,15 @@
       'selectedsharingoption' => 2,
       'userinputsharingkey' => '',
       'sharingoptions' => 15,
+    ),
+    'tool_policy/policy_optional' =>
+    array (
+      'mode' => 4,
+      'component' => 'tool_policy',
+      'area' => 'policy_optional',
+      'selectedsharingoption' => 2,
+      'userinputsharingkey' => '',
+      'sharingoptions' => 2,
     ),
     'tool_uploadcourse/helper' =>
     array (
