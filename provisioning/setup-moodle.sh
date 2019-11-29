@@ -6,7 +6,7 @@ chmod 777 /srv/webdata/moodledata
 chown -R apache: /srv/*
 
 # get moodle
-version="MOODLE_37_STABLE"
+version="MOODLE_38_STABLE"
 echo " "
 echo "installing $version"
 echo " "
