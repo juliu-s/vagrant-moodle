@@ -21,7 +21,7 @@ yum -y install httpd \
     rh-php72-php-xml \
     rh-php72-php-xmlrpc \
     rh-php72-runtime \
-    sclo-php72-php-pecl-redis4 \
+    sclo-php72-php-pecl-redis5 \
     sclo-php72-php-pecl-igbinary
 
 # add apache config for haproxy
