@@ -22,7 +22,15 @@ su -s /bin/bash -c "/opt/rh/rh-php72/root/bin/php /srv/webdata/www/admin/cli/ins
 cd /srv/webdata/www/report
 su -s /bin/bash -c "git clone -q https://github.com/mikasmart/benchmark benchmark" apache
 cd
+# install extra auth plugins
+cd /srv/webdata/www/auth
+su -s /bin/bash -c "git clone -q https://github.com/catalyst/moodle-auth_saml2 saml2" apache
+su -s /bin/bash -c "git clone -q https://github.com/microsoft/o365-moodle openid" apache
+mv openid/auth/oidc .
+rm -rf openid
+cd
 
+# activate new plugins
 su -s /bin/bash -c "/opt/rh/rh-php72/root/bin/php /srv/webdata/www/admin/cli/upgrade.php --non-interactive" apache
 
 # add local cache dir for Moodle (nfs is slow)
