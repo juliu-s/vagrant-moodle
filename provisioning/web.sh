@@ -27,7 +27,7 @@ yum -y install httpd \
 # add apache config for haproxy
 cp /vagrant/provisioning/files/telegraf_apache.conf /etc/telegraf/telegraf.d/telegraf_apache.conf
 
-# optimize php-opcache -> https://docs.moodle.org/35/en/OPcache
+# optimize php-opcache -> https://docs.moodle.org/38/en/OPcache
 sed -i 's/4000/10000/g' /etc/opt/rh/rh-php72/php.d/10-opcache.ini
 sed -i 's/;opcache\.revalidate_freq=2/opcache\.revalidate_freq=60/g' /etc/opt/rh/rh-php72/php.d/10-opcache.ini
 sed -i 's/;opcache\.use_cwd=1/opcache\.use_cwd=1/g' /etc/opt/rh/rh-php72/php.d/10-opcache.ini
