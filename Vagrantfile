@@ -14,7 +14,6 @@ Vagrant.configure("2") do |config|
       vm.memory = 2048
       vm.cpus = 2
     end
-    dataserver.vm.network :forwarded_port, guest: 3000, host: 3000
     dataserver.vm.provision :shell, path: "provisioning/common.sh"
     dataserver.vm.provision :shell, path: "provisioning/data-server.sh"
   end
@@ -54,18 +53,7 @@ Vagrant.configure("2") do |config|
     web1.vm.network :forwarded_port, guest: 80, host: 8181
     web1.vm.provision :shell, path: "provisioning/common.sh"
     web1.vm.provision :shell, path: "provisioning/web.sh"
+    web1.vm.provision :shell, path: "provisioning/setup-moodle.sh"
   end
 
-  config.vm.define :"web2" do |web2|
-    web2.vm.hostname = "web2.example.com"
-    web2.vm.network "private_network", ip: "192.168.100.112"
-    web2.vm.provider :virtualbox do |vm|
-      vm.memory = 2048
-      vm.cpus = 2
-    end
-    web2.vm.network :forwarded_port, guest: 80, host: 8282
-    web2.vm.provision :shell, path: "provisioning/common.sh"
-    web2.vm.provision :shell, path: "provisioning/web.sh"
-    web2.vm.provision :shell, path: "provisioning/setup-moodle.sh"
-  end
 end
