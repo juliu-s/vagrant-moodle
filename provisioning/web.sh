@@ -1,42 +1,36 @@
 #!/bin/bash
 
+php_version="73"
+
 # install packages
 yum -y install httpd \
     mariadb \
-    rh-php72-php-fpm \
-    rh-php72-php-cli \
-    rh-php72-php-common \
-    rh-php72-php-devel \
-    rh-php72-php-gd \
-    rh-php72-php-intl \
-    rh-php72-php-json \
-    rh-php72-php-ldap \
-    rh-php72-php-mbstring \
-    rh-php72-php-mysqlnd \
-    rh-php72-php-opcache \
-    rh-php72-php-pdo \
-    rh-php72-php-pear \
-    rh-php72-php-process \
-    rh-php72-php-soap \
-    rh-php72-php-xml \
-    rh-php72-php-xmlrpc \
-    rh-php72-runtime \
-    sclo-php72-php-pecl-redis5 \
-    sclo-php72-php-pecl-igbinary
-
-# add apache config for haproxy
-cp /vagrant/provisioning/files/telegraf_apache.conf /etc/telegraf/telegraf.d/telegraf_apache.conf
+    rh-php"$php_version"-php-fpm \
+    rh-php"$php_version"-php-cli \
+    rh-php"$php_version"-php-common \
+    rh-php"$php_version"-php-devel \
+    rh-php"$php_version"-php-gd \
+    rh-php"$php_version"-php-intl \
+    rh-php"$php_version"-php-json \
+    rh-php"$php_version"-php-ldap \
+    rh-php"$php_version"-php-mbstring \
+    rh-php"$php_version"-php-mysqlnd \
+    rh-php"$php_version"-php-opcache \
+    rh-php"$php_version"-php-pdo \
+    rh-php"$php_version"-php-pear \
+    rh-php"$php_version"-php-process \
+    rh-php"$php_version"-php-soap \
+    rh-php"$php_version"-php-xml \
+    rh-php"$php_version"-php-xmlrpc \
+    rh-php"$php_version"-runtime \
+    sclo-php"$php_version"-php-pecl-redis5 \
+    sclo-php"$php_version"-php-pecl-igbinary
 
 # optimize php-opcache -> https://docs.moodle.org/38/en/OPcache
-sed -i 's/4000/10000/g' /etc/opt/rh/rh-php72/php.d/10-opcache.ini
-sed -i 's/;opcache\.revalidate_freq=2/opcache\.revalidate_freq=60/g' /etc/opt/rh/rh-php72/php.d/10-opcache.ini
-sed -i 's/;opcache\.use_cwd=1/opcache\.use_cwd=1/g' /etc/opt/rh/rh-php72/php.d/10-opcache.ini
-sed -i 's/;opcache\.validate_timestamps=1/opcache\.validate_timestamps=1/g' /etc/opt/rh/rh-php72/php.d/10-opcache.ini
-sed -i 's/;opcache\.save_comments=1/opcache\.save_comments=1/g' /etc/opt/rh/rh-php72/php.d/10-opcache.ini
-sed -i 's/;opcache\.enable_file_override=0/opcache\.enable_file_override=0/g' /etc/opt/rh/rh-php72/php.d/10-opcache.ini
+cp /vagrant/provisioning/files/99-custom-settings.ini /etc/opt/rh/rh-php"$php_version"/php.d/99-custom-settings.ini
 
 # allow bigger uploads
-sed -i 's/2M/1024M/g' /etc/opt/rh/rh-php72/php.ini
+sed -i 's/2M/1024M/g' /etc/opt/rh/rh-php"$php_version"/php.ini
 
 # create mountpoint
 mkdir /srv/webdata
@@ -45,31 +39,31 @@ echo "data-server.example.com:/srv/webexport    /srv/webdata    nfs defaults    
 # mount
 mount -a
 # create dir for documentroot
-if [ "$HOSTNAME" == "web2.example.com" ]
+if [ "$HOSTNAME" == "web1.example.com" ]
 then
     mkdir /srv/webdata/www
 fi
 
 # create dir for local caching and fix selinux
 mkdir /tmp/moodle_temp_dir
-chown apache: /tmp/moodle_temp_dir
+chown apache:apache /tmp/moodle_temp_dir
 semanage fcontext -a -t httpd_sys_rw_content_t /tmp/moodle_temp_dir
 restorecon -v /tmp/moodle_temp_dir/
 
 # setup php-fpm
 mkdir /var/log/php-fpm
-sed -i 's/log_level = notice/log_level = debug/g' /etc/opt/rh/rh-php72/php-fpm.conf
-sed -i 's/error_log = \/var\/opt\/rh\/rh-php72\/log\/php-fpm\/error.log/error_log = \/var\/log\/php-fpm\/error.log/g' /etc/opt/rh/rh-php72/php-fpm.conf
+sed -i 's/log_level = notice/log_level = debug/g' /etc/opt/rh/rh-php"$php_version"/php-fpm.conf
+sed -i "s/error_log = \/var\/opt\/rh\/rh-php$php_version\/log\/php-fpm\/error.log/error_log = \/var\/log\/php-fpm\/error.log/g" /etc/opt/rh/rh-php"$php_version"/php-fpm.conf
 
-echo "slowlog = /var/opt/rh/rh-php72/log/php-fpm/www-slow.log" >> /etc/opt/rh/rh-php72/php-fpm.d/www.conf
-echo "request_slowlog_timeout = 10s" >> /etc/opt/rh/rh-php72/php-fpm.d/www.conf
-echo "access.log = /var/log/php-fpm/www-access.log" >> /etc/opt/rh/rh-php72/php-fpm.d/www.conf
-echo "php_admin_value[error_log] = /var/log/php-fpm/www-error.log" >> /etc/opt/rh/rh-php72/php-fpm.d/www.conf
-echo "catch_workers_output = yes" >> /etc/opt/rh/rh-php72/php-fpm.d/www.conf
-echo "listen.owner = apache" >> /etc/opt/rh/rh-php72/php-fpm.d/www.conf
-echo "listen.group = apache" >> /etc/opt/rh/rh-php72/php-fpm.d/www.conf
+echo "slowlog = /var/opt/rh/rh-php$php_version/log/php-fpm/www-slow.log" >> /etc/opt/rh/rh-php"$php_version"/php-fpm.d/www.conf
+echo "request_slowlog_timeout = 10s" >> /etc/opt/rh/rh-php"$php_version"/php-fpm.d/www.conf
+echo "access.log = /var/log/php-fpm/www-access.log" >> /etc/opt/rh/rh-php"$php_version"/php-fpm.d/www.conf
+echo "php_admin_value[error_log] = /var/log/php-fpm/www-error.log" >> /etc/opt/rh/rh-php"$php_version"/php-fpm.d/www.conf
+echo "catch_workers_output = yes" >> /etc/opt/rh/rh-php"$php_version"/php-fpm.d/www.conf
+echo "listen.owner = apache" >> /etc/opt/rh/rh-php"$php_version"/php-fpm.d/www.conf
+echo "listen.group = apache" >> /etc/opt/rh/rh-php"$php_version"/php-fpm.d/www.conf
 
-sed -i 's/listen = 127.0.0.1:9000/listen = \/var\/opt\/rh\/rh-php72\/run\/php-fpm\/www/g' /etc/opt/rh/rh-php72/php-fpm.d/www.conf
+sed -i "s/listen = 127.0.0.1:9000/listen = \/var\/opt\/rh\/rh-php$php_version\/run\/php-fpm\/www/g" /etc/opt/rh/rh-php"$php_version"/php-fpm.d/www.conf
 
 # setup httpd
 sed -i 's/LoadModule mpm_prefork_module modules\/mod_mpm_prefork.so/#LoadModule mpm_prefork_module modules\/mod_mpm_prefork.so/g' /etc/httpd/conf.modules.d/00-mpm.conf
@@ -78,11 +72,10 @@ sed -i 's/Listen 80/#Listen 80/g' /etc/httpd/conf/httpd.conf
 sed -i 's/LogLevel warn/LogLevel debug/g' /etc/httpd/conf/httpd.conf
 sed -i 's/    DirectoryIndex index.html/    DirectoryIndex index.html index.php/g' /etc/httpd/conf/httpd.conf
 
-# increase timeouts and configure stats page for telegraf
+# increase timeouts and configure stats page
 cat <<EOF >> /etc/httpd/conf/httpd.conf
 # set timeout to 10 min
 Timeout 600
-ProxyTimeout 600
 
 <Location /server-status>
     SetHandler server-status
@@ -101,26 +94,18 @@ setsebool -P httpd_can_network_connect_db on
 setsebool -P httpd_can_network_connect on
 
 # start & enable services
-systemctl enable rh-php72-php-fpm.service
-systemctl start rh-php72-php-fpm.service
+systemctl enable rh-php"$php_version"-php-fpm.service
+systemctl start rh-php"$php_version"-php-fpm.service
 systemctl enable httpd.service
 systemctl start httpd.service
-
-# restart telegraf
-systemctl restart telegraf.service
-
-# create "homedir" for apache, otherwise cron won't run
-mkdir -p /opt/rh/httpd24/root/usr/share/httpd
 
 # devide moodle cron
 if [ "$HOSTNAME" == "web0.example.com" ]
 then
     touch /srv/webdata/moodle_cron.log
     chown apache: /srv/webdata/moodle_cron.log
-    echo "0,9,18,27,36,45,54 * * * * apache /opt/rh/rh-php72/root/bin/php /srv/webdata/www/admin/cli/cron.php >> /srv/webdata/moodle_cron.log" > /etc/cron.d/moodle
+    echo "0,10,20,30,40,50 * * * * apache /opt/rh/rh-php$php_version/root/bin/php /srv/webdata/www/admin/cli/cron.php >> /srv/webdata/moodle_cron.log" > /etc/cron.d/moodle
 elif [ "$HOSTNAME" == "web1.example.com" ]
 then
-    echo "3,12,21,30,39,48,57 * * * * apache /opt/rh/rh-php72/root/bin/php /srv/webdata/www/admin/cli/cron.php >> /srvwebdata//moodle_cron.log" > /etc/cron.d/moodle
-else
-    echo "6,15,24,33,42,51 * * * * apache /opt/rh/rh-php72/root/bin/php /srv/webdata/www/admin/cli/cron.php >> /srv/webdata/moodle_cron.log" > /etc/cron.d/moodle
+    echo "5,15,25,35,45,55 * * * * apache /opt/rh/rh-php$php_version/root/bin/php /srv/webdata/www/admin/cli/cron.php >> /srvwebdata//moodle_cron.log" > /etc/cron.d/moodle
 fi

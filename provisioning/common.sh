@@ -4,16 +4,6 @@
 timedatectl set-ntp true
 timedatectl set-timezone 'Europe/Amsterdam'
 
-# add influxdb repo for influxdb and telegraf
-cat <<EOF >> /etc/yum.repos.d/influxdb.repo
-[influxdb]
-name = InfluxDB Repository - RHEL \$releasever
-baseurl = https://repos.influxdata.com/rhel/\$releasever/\$basearch/stable
-enabled = 1
-gpgcheck = 1
-gpgkey = https://repos.influxdata.com/influxdb.key
-EOF
-
 # update yum cache
 yum makecache fast -y
 
@@ -25,27 +15,12 @@ yum -y install tree \
     vim \
     bind-utils \
     git \
-    telegraf \
     lsof \
     iotop \
     tcpdump \
     iftop \
     strace \
     tracer
-
-# configure basic telegraf
-sed -i 's/#\ urls\ =\ \["http:\/\/127\.0\.0\.1:8086"\]/urls\ =\ \["http:\/\/192\.168\.100\.100:8086"\]/g' /etc/telegraf/telegraf.conf
-sed -i 's/#\ database\ =\ \"telegraf\"/database\ =\ "telegraf"/g' /etc/telegraf/telegraf.conf
-sed -i 's/#\ retention_policy/retention_policy/g' /etc/telegraf/telegraf.conf
-sed -i 's/#\ timeout\ =\ "5s"/timeout = "0s"/g' /etc/telegraf/telegraf.conf
-sed -i 's/#\ username\ =\ "telegraf"/username\ =\ "username"/g' /etc/telegraf/telegraf.conf
-sed -i 's/#\ password\ =\ "metricsmetricsmetricsmetrics"/password\ = "password"/g' /etc/telegraf/telegraf.conf
-
-cp /vagrant/provisioning/files/telegraf_basics.conf /etc/telegraf/telegraf.d/telegraf_basics.conf
-
-# start collecting
-systemctl enable telegraf
-systemctl start telegraf
 
 # create direcotries for vim stuff
 mkdir -p ~/.vim/bundle
@@ -79,6 +54,5 @@ echo "192.168.100.100   data-server.example.com data-server" >> /etc/hosts
 
 echo "192.168.100.110   web0.example.com web0" >> /etc/hosts
 echo "192.168.100.111   web1.example.com web1" >> /etc/hosts
-echo "192.168.100.112   web2.example.com web2" >> /etc/hosts
 
 echo "192.168.100.150   lb.example.com lb" >> /etc/hosts
