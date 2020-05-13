@@ -26,11 +26,26 @@ yum -y install httpd \
     sclo-php"$php_version"-php-pecl-redis5 \
     sclo-php"$php_version"-php-pecl-igbinary
 
-# optimize php-opcache -> https://docs.moodle.org/38/en/OPcache
-cp /vagrant/provisioning/files/99-custom-settings.ini /etc/opt/rh/rh-php"$php_version"/php.d/99-custom-settings.ini
+# configure php
+# https://docs.moodle.org/38/en/OPcache
+cat <<EOF >> /etc/opt/rh/rh-php"$php_version"/php.d/99-custom-settings.ini
+expose_php=off
 
-# allow bigger uploads
-sed -i 's/2M/1024M/g' /etc/opt/rh/rh-php"$php_version"/php.ini
+upload_max_filesize=1024M
+post_max_size=1024M
+
+opcache.enable=1
+opcache.memory_consumption=128
+opcache.max_accelerated_files=10000
+opcache.revalidate_freq=60
+opcache.use_cwd=1
+opcache.validate_timestamps=1
+opcache.save_comments=1
+opcache.enable_file_override=0
+opcache.revalidate_path=1
+opcache.fast_shutdown=1
+opcache.enable_cli=1
+EOF
 
 # create mountpoint
 mkdir /srv/webdata
@@ -84,7 +99,21 @@ Timeout 600
 EOF
 
 # copy moodle vhost
-cp /vagrant/provisioning/files/00_vhost.conf /etc/httpd/conf.d/00_vhost.conf
+cat <<EOF >> /etc/httpd/conf.d/00_moodle_vhost.conf
+Listen 80
+
+<VirtualHost *:80>
+    DocumentRoot /srv/webdata/www
+    TransferLog /var/log/httpd/moodle-access_log
+    ErrorLog /var/log/httpd/moodle-error_log
+    ProxyPassMatch ^/(.*\.php(/.*)?)$ unix:/var/opt/rh/rh-php$php_version/run/php-fpm/www|fcgi://localhost:9000/srv/webdata/www/
+    <Directory "/srv/webdata">
+        Options Indexes FollowSymLinks
+        Require all granted
+        AllowOverride All
+    </Directory>
+</VirtualHost>
+EOF
 
 # allow apache to use nfs
 setsebool -P httpd_use_nfs on
@@ -107,5 +136,5 @@ then
     echo "0,10,20,30,40,50 * * * * apache /opt/rh/rh-php$php_version/root/bin/php /srv/webdata/www/admin/cli/cron.php >> /srv/webdata/moodle_cron.log" > /etc/cron.d/moodle
 elif [ "$HOSTNAME" == "web1.example.com" ]
 then
-    echo "5,15,25,35,45,55 * * * * apache /opt/rh/rh-php$php_version/root/bin/php /srv/webdata/www/admin/cli/cron.php >> /srvwebdata//moodle_cron.log" > /etc/cron.d/moodle
+    echo "5,15,25,35,45,55 * * * * apache /opt/rh/rh-php$php_version/root/bin/php /srv/webdata/www/admin/cli/cron.php >> /srvwebdata/moodle_cron.log" > /etc/cron.d/moodle
 fi
