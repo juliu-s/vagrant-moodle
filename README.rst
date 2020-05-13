@@ -15,13 +15,13 @@ Using Vagrant to setup a few servers with increased logging to play with Moodle 
                ,-----------------.
                |       lb        | - HAProxy with sticky sessions
                `-----------------'
-                  /    |       \
-     ,----------. ,----------. ,----------.
-     | web-tst0 | | web-tst1 | | web-tst2 | - Apache & PHP-FPM
-     `----------' `----------' `----------'
-                    \  |   /
+                    /        \
+            ,----------. ,----------.
+            |   web0   | |   web1   |  - Apache & PHP-FPM
+            `----------' `----------'
+                    \       /
                 ,-------------.
-                | data-server | - MariaDB, InfluxDB, Redis, NFS & Grafana
+                | data-server | - MariaDB, Redis, & NFS
                 `-------------'
 
 
@@ -62,8 +62,6 @@ Details
 +-------------------------------------+-----------------+---------------+
 | web1.example.com                    | 192.168.100.111 | 2 CPU, 2048M  |
 +-------------------------------------+-----------------+---------------+
-| web2.example.com                    | 192.168.100.112 | 2 CPU, 2048M  |
-+-------------------------------------+-----------------+---------------+
 | data-server.example.com             | 192.168.100.100 | 2 CPU, 2048M  |
 +-------------------------------------+-----------------+---------------+
 
@@ -83,9 +81,8 @@ Post setup
 To SSH into a server run from this repo:
 
 * vagrant ssh data-server
+* vagrant ssh web0
 * vagrant ssh web1
-* vagrant ssh web2
-* vagrant ssh web3
 * vagrant ssh lb
 
 **data-server.example.com**
@@ -96,7 +93,7 @@ To SSH into a server run from this repo:
 
 * The HAProxy server is automatically configured
 
-**web0, web1 and 2.example.com**
+**web0, and web1.example.com**
 
 * The web servers are automaticlly configured
 * The Moodle application is automatically installed and configured
@@ -106,15 +103,10 @@ Usage
 
 .. code-block:: text
 
-    From your host OS, browse localhost:3000 for Grafana
     From your host OS, browse localhost:9090 for HAProxy stats
     From your host OS, browse localhost:8080 for web0 webpage
     From your host OS, browse localhost:8181 for web1 webpage
-    From your host OS, browse localhost:8282 for web2 webpage
     From your host OS, browse localhost:8383 for the loadbalanced webpage
-
-    Grafana username: admin
-    Grafana password: admin123
 
     Moodle username: admin
     Moodle password: AdminAdmin123!
