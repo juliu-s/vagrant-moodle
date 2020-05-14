@@ -7,8 +7,34 @@ yum -y install mariadb-server \
 # reload systemd-daemon
 systemctl daemon-reload
 
-# copy mysql config
-cp /vagrant/provisioning/files/0_moodle.cnf /etc/my.cnf.d/0_moodle.cnf
+# mysql config
+cat <<EOF >> /etc/my.cnf.d/0_moodle.cnf
+[client]
+default-character-set = utf8mb4
+
+[mysqld]
+log-error=/var/log/mariadb/mariadb-error.log
+
+innodb_file_format = Barracuda
+innodb_file_per_table = 1
+innodb_large_prefix
+
+character-set-server = utf8mb4
+collation-server = utf8mb4_unicode_ci
+skip-character-set-client-handshake
+
+thread_cache_size = 4
+
+innodb_stats_on_metadata = OFF
+
+slow_query_log_file = /var/log/mariadb/mariadb-slow.log
+log_queries_not_using_indexes = ON
+long_query_time = 2
+slow_query_log = ON
+
+[mysql]
+default-character-set = utf8mb4
+EOF
 
 touch /var/log/mariadb/mariadb-error.log
 touch /var/log/mariadb/mariadb-slow.log
