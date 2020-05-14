@@ -70,14 +70,16 @@ cp /vagrant/provisioning/files/hostname.php /srv/webdata/www/hostname.php
 cp /vagrant/provisioning/files/phpinfo.php /srv/webdata/www/phpinfo.php
 chown apache:apache /srv/webdata/www/*.php
 
-echo " "
-echo "Moodle:"
-echo " "
-echo "url: http://localhost:8383"
-echo "username: admin"
-echo "password: AdminAdmin123!"
-echo " "
-echo "HAProxy stats:"
-echo " "
-echo "url: http://localhost:9090"
-echo " "
+echo "
+Done..
+
+To see Moodle:
+
+url: http://localhost:8383
+username: admin
+password: AdminAdmin123!
+
+To see HAProxy stats:
+
+url: http://localhost:9090
+"
