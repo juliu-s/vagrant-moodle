@@ -50,7 +50,7 @@ EOF
 # create mountpoint
 mkdir /srv/webdata
 # create fstab entry
-echo "data-server.example.com:/srv/webexport    /srv/webdata    nfs defaults    0 0" >> /etc/fstab
+echo "data-server.example.com:/srv/webexport    /srv/webdata    nfs vers=3    0 0" >> /etc/fstab
 # mount
 mount -a
 # create dir for documentroot
@@ -70,13 +70,15 @@ mkdir /var/log/php-fpm
 sed -i 's/log_level = notice/log_level = debug/g' /etc/opt/rh/rh-php"$php_version"/php-fpm.conf
 sed -i "s/error_log = \/var\/opt\/rh\/rh-php$php_version\/log\/php-fpm\/error.log/error_log = \/var\/log\/php-fpm\/error.log/g" /etc/opt/rh/rh-php"$php_version"/php-fpm.conf
 
-echo "slowlog = /var/opt/rh/rh-php$php_version/log/php-fpm/www-slow.log" >> /etc/opt/rh/rh-php"$php_version"/php-fpm.d/www.conf
-echo "request_slowlog_timeout = 10s" >> /etc/opt/rh/rh-php"$php_version"/php-fpm.d/www.conf
-echo "access.log = /var/log/php-fpm/www-access.log" >> /etc/opt/rh/rh-php"$php_version"/php-fpm.d/www.conf
-echo "php_admin_value[error_log] = /var/log/php-fpm/www-error.log" >> /etc/opt/rh/rh-php"$php_version"/php-fpm.d/www.conf
-echo "catch_workers_output = yes" >> /etc/opt/rh/rh-php"$php_version"/php-fpm.d/www.conf
-echo "listen.owner = apache" >> /etc/opt/rh/rh-php"$php_version"/php-fpm.d/www.conf
-echo "listen.group = apache" >> /etc/opt/rh/rh-php"$php_version"/php-fpm.d/www.conf
+cat <<EOF >> /etc/opt/rh/rh-php"$php_version"/php-fpm.d/www.conf
+slowlog = /var/opt/rh/rh-php$php_version/log/php-fpm/www-slow.log
+request_slowlog_timeout = 10s
+access.log = /var/log/php-fpm/www-access.log
+php_admin_value[error_log] = /var/log/php-fpm/www-error.log
+catch_workers_output = yes
+listen.owner = apache
+listen.group = apache
+EOF
 
 sed -i "s/listen = 127.0.0.1:9000/listen = \/var\/opt\/rh\/rh-php$php_version\/run\/php-fpm\/www/g" /etc/opt/rh/rh-php"$php_version"/php-fpm.d/www.conf
 
