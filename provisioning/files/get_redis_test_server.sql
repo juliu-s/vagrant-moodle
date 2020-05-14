@@ -4,11 +4,11 @@ SELECT
 FROM
     mdl_config_plugins
 WHERE
-    id = 155;
+    name = 'test_server';
 
 SELECT
     value
 FROM
     mdl_config_plugins
 WHERE
-    id = 157;
+    name = 'test_serializer';
