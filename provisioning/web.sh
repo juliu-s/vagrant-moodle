@@ -50,7 +50,7 @@ EOF
 # create mountpoint
 mkdir /srv/webdata
 # create fstab entry
-echo "data-server.example.com:/srv/webexport    /srv/webdata    nfs vers=3    0 0" >> /etc/fstab
+echo "data-server.example.com:/srv/webexport    /srv/webdata    nfs nfsvers=3,noatime    0 0" >> /etc/fstab
 # mount
 mount -a
 # create dir for documentroot
