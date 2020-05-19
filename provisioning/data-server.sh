@@ -8,24 +8,33 @@ yum -y install mariadb-server \
 systemctl daemon-reload
 
 # mysql config
-cat <<EOF >> /etc/my.cnf.d/0_moodle.cnf
+cat <<EOF >> /etc/my.cnf.d/customsettings.cnf
 [client]
 default-character-set = utf8mb4
 
 [mysqld]
-log-error=/var/log/mariadb/mariadb-error.log
-
-innodb_file_format = Barracuda
-innodb_file_per_table = 1
-innodb_large_prefix
-
 character-set-server = utf8mb4
 collation-server = utf8mb4_unicode_ci
 skip-character-set-client-handshake
 
-thread_cache_size = 4
-
+innodb_buffer_pool_size = 1G
+max_allowed_packet = 64M
+innodb_file_per_table = 1
+innodb_large_prefix = 1
+innodb_file_format = barracuda
+innodb_buffer_pool_instances = 12
+innodb_flush_log_at_trx_commit = 0
+innodb_flush_method = O_DIRECT
+innodb_log_file_size = 256M
+innodb_read_io_threads = 28
 innodb_stats_on_metadata = OFF
+innodb_thread_concurrency = 8
+innodb_write_io_threads = 16
+
+query_cache_size = 0
+query_cache_type = OFF
+
+log-error=/var/log/mariadb/mariadb-error.log
 
 slow_query_log_file = /var/log/mariadb/mariadb-slow.log
 log_queries_not_using_indexes = ON
