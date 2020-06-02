@@ -106,8 +106,9 @@ Listen 80
 
 <VirtualHost *:80>
     DocumentRoot /srv/webdata/www
-    TransferLog /var/log/httpd/moodle-access_log
     ErrorLog /var/log/httpd/moodle-error_log
+    CustomLog /var/log/httpd/moodle-access_log \
+            "LB: %h X-Forwared-For: %{X-Forwarded-For}i %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\" **%T/%D**"
     ProxyPassMatch ^/(.*\.php(/.*)?)$ unix:/var/opt/rh/rh-php$php_version/run/php-fpm/www|fcgi://localhost:9000/srv/webdata/www/
     <Directory "/srv/webdata">
         Options Indexes FollowSymLinks
@@ -135,8 +136,8 @@ if [ "$HOSTNAME" == "web0.example.com" ]
 then
     touch /srv/webdata/moodle_cron.log
     chown apache: /srv/webdata/moodle_cron.log
-    echo "0,10,20,30,40,50 * * * * apache /opt/rh/rh-php$php_version/root/bin/php /srv/webdata/www/admin/cli/cron.php >> /srv/webdata/moodle_cron.log" > /etc/cron.d/moodle
+    echo "0,4,8,12,16,20,24,28,32,36,40,44,48,52,56 * * * * apache /opt/rh/rh-php$php_version/root/bin/php /srv/webdata/www/admin/cli/cron.php >> /srv/webdata/moodle_cron.log" > /etc/cron.d/moodle
 elif [ "$HOSTNAME" == "web1.example.com" ]
 then
-    echo "5,15,25,35,45,55 * * * * apache /opt/rh/rh-php$php_version/root/bin/php /srv/webdata/www/admin/cli/cron.php >> /srvwebdata/moodle_cron.log" > /etc/cron.d/moodle
+    echo "2,6,10,14,18,22,26,30,34,38,42,46,50,54,58 * * * * apache /opt/rh/rh-php$php_version/root/bin/php /srv/webdata/www/admin/cli/cron.php >> /srv/webdata/moodle_cron.log" > /etc/cron.d/moodle
 fi
