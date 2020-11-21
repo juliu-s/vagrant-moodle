@@ -54,13 +54,13 @@ su -s /bin/bash -c "/opt/rh/rh-php$php_version/root/bin/php /srv/webdata/www/adm
 # add config local cache dir for Moodle (nfs is slow) and testing
 cat <<EOF >> /srv/webdata/www/config.php
 // Intended for local node caching.
-$CFG->localcachedir = '/tmp/moodle_temp_dir';
+\$CFG->localcachedir = '/tmp/moodle_temp_dir';
 // https://docs.moodle.org/en/Debugging
-$CFG->debug = 2047;
-$CFG->debugdisplay = 1;
+\$CFG->debug = 2047;
+\$CFG->debugdisplay = 1;
 // https://docs.moodle.org/dev/JMeter
 // https://github.com/moodlehq/moodle-performance-comparison
-$CFG->tool_generator_users_password = "moodle";
+\$CFG->tool_generator_users_password = "moodle";
 EOF
 
 # add redis cache stores
@@ -73,7 +73,6 @@ mysql -h data-server.example.com -u moodleuser --password="yourpassword" < /vagr
 # purge caches
 su -s /bin/bash -c "/opt/rh/rh-php$php_version/root/bin/php /srv/webdata/www/admin/cli/purge_caches.php" apache
 # create some content and test plan
-su -s /bin/bash -c "/opt/rh/rh-php$php_version/root/bin/php /srv/webdata/www/admin/tool/generator/cli/maketestsite.php  --bypasscheck --size=S" apache
 su -s /bin/bash -c "/opt/rh/rh-php$php_version/root/bin/php /srv/webdata/www/admin/tool/generator/cli/maketestcourse.php --bypasscheck --shortname=001_Test_course_size_S --fullname=001_Test_course_size_S --size=S" apache
 su -s /bin/bash -c "/opt/rh/rh-php$php_version/root/bin/php /srv/webdata/www/admin/tool/generator/cli/maketestplan.php --shortname=001_Test_course_size_S --bypasscheck --size=S" apache
 
