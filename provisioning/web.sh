@@ -67,12 +67,12 @@ restorecon -v /tmp/moodle_temp_dir/
 
 # setup php-fpm
 mkdir /var/log/php-fpm
-sed -i 's/log_level = notice/log_level = debug/g' /etc/opt/rh/rh-php"$php_version"/php-fpm.conf
+sed -i 's/;log_level = notice/log_level = debug/g' /etc/opt/rh/rh-php"$php_version"/php-fpm.conf
 sed -i "s/error_log = \/var\/opt\/rh\/rh-php$php_version\/log\/php-fpm\/error.log/error_log = \/var\/log\/php-fpm\/error.log/g" /etc/opt/rh/rh-php"$php_version"/php-fpm.conf
 
 cat <<EOF >> /etc/opt/rh/rh-php"$php_version"/php-fpm.d/www.conf
-slowlog = /var/opt/rh/rh-php$php_version/log/php-fpm/www-slow.log
-request_slowlog_timeout = 10s
+slowlog = /var/log/php-fpm/www-slow.log
+request_slowlog_timeout = 5s
 access.log = /var/log/php-fpm/www-access.log
 php_admin_value[error_log] = /var/log/php-fpm/www-error.log
 catch_workers_output = yes
@@ -109,7 +109,7 @@ Listen 80
     ErrorLog /var/log/httpd/moodle-error_log
     CustomLog /var/log/httpd/moodle-access_log \
             "LB: %h X-Forwared-For: %{X-Forwarded-For}i %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\" **%T/%D**"
-    ProxyPassMatch ^/(.*\.php(/.*)?)$ unix:/var/opt/rh/rh-php$php_version/run/php-fpm/www|fcgi://localhost:9000/srv/webdata/www/
+    ProxyPassMatch ^/(.*\.php(/.*)?)$ unix:/var/opt/rh/rh-php$php_version/run/php-fpm/www|fcgi://localhost/srv/webdata/www/
     <Directory "/srv/webdata">
         Options Indexes FollowSymLinks
         Require all granted

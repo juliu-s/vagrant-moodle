@@ -62,7 +62,7 @@ mysql -e "GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,CREATE TEMPORARY TABLES,DROP,
 cd /home/vagrant || exit
 git clone -q https://github.com/major/MySQLTuner-perl mysqltuner
 cd || exit
-chown -R vagrant: /home/vagrant
+chown -R vagrant:vagrant /home/vagrant
 
 # start and enable and export nfs
 systemctl enable nfs-server

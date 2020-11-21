@@ -6,7 +6,7 @@ moodle_version="MOODLE_38_STABLE"
 # prepare dirs
 mkdir -p /srv/webdata/moodledata
 chmod 777 /srv/webdata/moodledata
-chown -R apache: /srv/*
+chown -R apache:apache /srv/*
 
 # get moodle
 echo " "
@@ -51,18 +51,31 @@ cd || exit
 # activate new plugins
 su -s /bin/bash -c "/opt/rh/rh-php$php_version/root/bin/php /srv/webdata/www/admin/cli/upgrade.php --non-interactive" apache
 
-# add local cache dir for Moodle (nfs is slow)
-echo -e "\n// Intended for local node caching." >> /srv/webdata/www/config.php
-echo "\$CFG->localcachedir = '/tmp/moodle_temp_dir';    // Intended for local node caching." >> /srv/webdata/www/config.php
+# add config local cache dir for Moodle (nfs is slow) and testing
+cat <<EOF >> /srv/webdata/www/config.php
+// Intended for local node caching.
+$CFG->localcachedir = '/tmp/moodle_temp_dir';
+// https://docs.moodle.org/en/Debugging
+$CFG->debug = 2047;
+$CFG->debugdisplay = 1;
+// https://docs.moodle.org/dev/JMeter
+// https://github.com/moodlehq/moodle-performance-comparison
+$CFG->tool_generator_users_password = "moodle";
+EOF
 
 # add redis cache stores
 cp /vagrant/provisioning/files/muc_config.php /srv/webdata/moodledata/muc/config.php
 chmod 666 /srv/webdata/moodledata/muc/config.php
-chown apache: /srv/webdata/moodledata/muc/config.php
+chown apache:apache /srv/webdata/moodledata/muc/config.php
 
 # add redis test cache store
 mysql -h data-server.example.com -u moodleuser --password="yourpassword" < /vagrant/provisioning/files/set_redis_test_server.sql
+# purge caches
 su -s /bin/bash -c "/opt/rh/rh-php$php_version/root/bin/php /srv/webdata/www/admin/cli/purge_caches.php" apache
+# create some content and test plan
+su -s /bin/bash -c "/opt/rh/rh-php$php_version/root/bin/php /srv/webdata/www/admin/tool/generator/cli/maketestsite.php  --bypasscheck --size=S" apache
+su -s /bin/bash -c "/opt/rh/rh-php$php_version/root/bin/php /srv/webdata/www/admin/tool/generator/cli/maketestcourse.php --bypasscheck --shortname=001_Test_course_size_S --fullname=001_Test_course_size_S --size=S" apache
+su -s /bin/bash -c "/opt/rh/rh-php$php_version/root/bin/php /srv/webdata/www/admin/tool/generator/cli/maketestplan.php --shortname=001_Test_course_size_S --bypasscheck --size=S" apache
 
 # copy info pages for debugging
 curl -so /srv/webdata/www/opcache.php https://raw.githubusercontent.com/amnuts/opcache-gui/master/index.php
